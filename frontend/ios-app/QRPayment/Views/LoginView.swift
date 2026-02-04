@@ -72,7 +72,7 @@ struct LoginView: View {
             do {
                 let response = try await APIService.shared.login(phoneNumber: trimmedPhone, pin: trimmedPin)
                 await MainActor.run {
-                    appState.setAuthToken(response.token)
+                    appState.setAuthenticated(user: response.user, token: response.token)
                     isLoading = false
                 }
             } catch {
@@ -84,4 +84,3 @@ struct LoginView: View {
         }
     }
 }
-

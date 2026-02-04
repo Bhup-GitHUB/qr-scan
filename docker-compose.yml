@@ -9,6 +9,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts:/seed:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qrpay -d qr_payment"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
 
   redis:
     image: redis:7-alpine
@@ -17,6 +23,11 @@ services:
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
 
   backend:
     build:
@@ -31,10 +42,19 @@ services:
       SERVER_PORT: "8080"
       RUST_LOG: info
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - "8080:8080"
+    restart: on-failure
+
+  tester:
+    image: curlimages/curl:8.6.0
+    depends_on:
+      - backend
+    entrypoint: ["sh", "-lc"]
 
 volumes:
   postgres_data:
