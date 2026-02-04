@@ -1,4 +1,4 @@
-FROM rust:1.76-bookworm AS builder
+FROM rust:1.93-bookworm AS builder
 
 WORKDIR /app
 COPY Cargo.toml Cargo.lock* ./
@@ -18,4 +18,3 @@ ENV SERVER_PORT=8080
 EXPOSE 8080
 
 CMD ["/app/qr-payment-backend"]
-

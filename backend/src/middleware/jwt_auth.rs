@@ -1,6 +1,7 @@
 use actix_web::dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform};
 use actix_web::{Error, HttpMessage};
 use futures_util::future::{ready, LocalBoxFuture, Ready};
+use std::rc::Rc;
 use uuid::Uuid;
 
 use crate::config::Config;
@@ -30,14 +31,14 @@ where
 
     fn new_transform(&self, service: S) -> Self::Future {
         ready(Ok(JwtAuthMiddleware {
-            service,
+            service: Rc::new(service),
             config: self.config.clone(),
         }))
     }
 }
 
 pub struct JwtAuthMiddleware<S> {
-    service: S,
+    service: Rc<S>,
     config: Config,
 }
 
@@ -60,7 +61,7 @@ where
             .and_then(|h| h.to_str().ok())
             .map(|s| s.to_string());
 
-        let srv = &self.service;
+        let srv = self.service.clone();
 
         Box::pin(async move {
             let auth_header = auth_header.ok_or_else(|| AppError::unauthorized("missing authorization"))?;

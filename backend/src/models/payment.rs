@@ -33,7 +33,7 @@ pub struct PaymentInitRequest {
     pub idempotency_key: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PaymentInitResponse {
     pub session_id: Uuid,
     pub merchant: MerchantInfo,
@@ -54,7 +54,7 @@ pub struct PaymentExecuteRequest {
     pub pin: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PaymentExecuteResponse {
     pub transaction_id: Uuid,
     pub status: String,
