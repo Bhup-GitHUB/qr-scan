@@ -53,7 +53,7 @@ where
 
     forward_ready!(service);
 
-    fn call(&self, mut req: ServiceRequest) -> Self::Future {
+    fn call(&self, req: ServiceRequest) -> Self::Future {
         let cfg = self.config.clone();
         let auth_header = req
             .headers()
@@ -62,6 +62,8 @@ where
             .map(|s| s.to_string());
 
         let srv = self.service.clone();
+
+        let mut req = req;
 
         Box::pin(async move {
             let auth_header = auth_header.ok_or_else(|| AppError::unauthorized("missing authorization"))?;

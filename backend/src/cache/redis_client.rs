@@ -35,7 +35,7 @@ impl RedisClient {
     pub async fn set<T: Serialize>(&self, key: &str, value: &T, expiry_secs: usize) -> Result<(), String> {
         let serialized = serde_json::to_string(value).map_err(|e| e.to_string())?;
         let mut conn = self.conn.lock().await;
-        conn.set_ex(key, serialized, expiry_secs)
+        conn.set_ex(key, serialized, expiry_secs as u64)
             .await
             .map_err(|e| e.to_string())
     }
@@ -45,4 +45,3 @@ impl RedisClient {
         conn.del(key).await.map_err(|e| e.to_string())
     }
 }
-

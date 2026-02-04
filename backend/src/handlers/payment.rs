@@ -1,4 +1,4 @@
-use actix_web::{post, web, HttpRequest, HttpResponse};
+use actix_web::{post, web, HttpMessage, HttpRequest, HttpResponse};
 
 use crate::handlers::errors::AppError;
 use crate::handlers::AppState;
@@ -37,4 +37,3 @@ pub async fn execute_payment(
     let resp = services::payment::execute_payment(&state.db, &state.redis, user, payload.into_inner()).await?;
     Ok(HttpResponse::Ok().json(resp))
 }
-
