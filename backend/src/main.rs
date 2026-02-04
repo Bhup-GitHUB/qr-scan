@@ -1,15 +1,7 @@
-mod cache;
-mod config;
-mod db;
-mod handlers;
-mod middleware;
-mod models;
-mod services;
-mod utils;
-
 use actix_web::{middleware::Logger, web, App, HttpServer};
-use config::Config;
-use middleware::jwt_auth::JwtAuth;
+use qr_payment_backend::config::Config;
+use qr_payment_backend::middleware::jwt_auth::JwtAuth;
+use qr_payment_backend::{cache, db, handlers};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
